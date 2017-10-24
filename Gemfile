@@ -11,7 +11,14 @@ gem 'dm-sqlite-adapter'
 gem 'dm-types'
 gem 'sqlite3'
 gem 'rest-client'
+gem 'rake'
 
 group :development do
   gem 'pry'
+end
+
+group :test do
+  gem 'rspec'
+  gem 'rack-test'
+  gem 'database_cleaner'
 end
