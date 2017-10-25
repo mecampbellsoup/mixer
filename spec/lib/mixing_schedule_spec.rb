@@ -28,11 +28,11 @@ RSpec.describe MixingSchedule do
     it 'enqueues the correct number of jobs to return the deposited coins to the user' do
       mixing_schedule.enqueue!
       return_to_user_jobs = SendJobcoinsJob.jobs.select do |job|
-          user.addresses_list.include?(job['args'][0]['to'])
+          user.addresses_list.include?(job['args'][1])
       end
 
       to_be_returned_amount = return_to_user_jobs.reduce(0) do |accum, inc|
-        accum += inc['args'][0]['amount']
+        accum += inc['args'][2]
         accum
       end
 

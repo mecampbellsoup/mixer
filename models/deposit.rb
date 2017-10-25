@@ -23,7 +23,7 @@ class Deposit
   # Hooks
   before :create, :digest
   after  :create, :transfer_deposited_coins_into_house_account
-  after  :create, :schedule_repayments
+  after  :create, :schedule_internal_and_repayment_transactions
 
   class << self
     def from_transaction_hash(hash)
@@ -52,18 +52,12 @@ class Deposit
   private
 
   def transfer_deposited_coins_into_house_account
-    binding.pry
     # NOTE: `raise` if this transfer fails (it should not barring JBC API issues)
-    SendJobcoinsJob.new.perform(
-      from: received_address,
-      to: HOUSE_ACCOUNT_ADDRESS,
-      amount: amount
-    ) || raise("Transfer to house account failed.")
+    SendJobcoinsJob.new.perform(received_address, HOUSE_ACCOUNT_ADDRESS, amount) ||
+      raise("Transfer to house account failed.")
   end
 
-  def schedule_internal_mixing_transactions
-    # NOTE: creating the repayment resources enqueues the SendJobcoinsJob
-    # to return jobcoins from InternalMixerAddressN to user.addresses
+  def schedule_internal_and_repayment_transactions
     schedule = MixingSchedule.new(self)
     schedule.enqueue!
   end

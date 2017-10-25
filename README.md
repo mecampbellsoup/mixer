@@ -24,19 +24,39 @@ cd mixer
 bundle install
 ```
 
-In a separate TTY, start the mixer HTTP API:
+In a separate TTY, start the mixer HTTP API if you need to register with the mixer (more on that below):
 
 ```
 bundle exec rackup config.ru
 ```
 
-Finally, initialize the mixer deposit address poller:
+Finally, initialize the mixer's deposit address poller:
 
 ```
 bundle exec sidekiq -r ./config/sidekiq.rb
 ```
-This kicks off a recurring job to poll the mixer's public deposit address for new deposits from registered users (note that deposits from unregistered users are simply [ignored]() for the time being).
+
+This kicks off a recurring job to poll the mixer's public deposit address for new deposits from registered users (note that deposits from unregistered users are simply [ignored](https://github.com/mecampbellsoup/mixer/blob/5c57dc9ea34ed6bc893d0426aa63edf49d25f500/jobs/poll_mixer_deposit_address_job.rb#L20-L23) for the time being).
+
+Once new user deposits are seen, they are ingested and a [schedule of obfuscation & repayment Jobcoin transactions](https://github.com/mecampbellsoup/mixer/blob/5c57dc9ea34ed6bc893d0426aa63edf49d25f500/lib/mixing_schedule.rb#L43-L47) is [enqueued](https://github.com/mecampbellsoup/mixer/blob/5c57dc9ea34ed6bc893d0426aa63edf49d25f500/models/deposit.rb#L64-L67).
 
 ## Register a user
 
-The web API allows new users to 'register' via `POST /registrations`. 
+The web API allows new users to 'register' via `POST /registrations`. For example:
+
+```bash
+curl -XPOST localhost:9292/registrations -d '{ "name": "Alice", "addresses": ["Alice", "Alice1", "Alice2", "Alice3"] }'
+```
+**NOTE:** The mixer will *only* consider Jobcoin transactions received by the mixer's public deposit address which **come from the address 'Alice'** (the registered user's name) to be associated with this registered user.
+
+## Fees
+
+This is a zero-fee mixer :)
+
+There are lots of ways to skin a cat, but if I were to add a fee I could adjust the implementation of `MixingSchedule#increments` to deduct a fixed (or percentage) fee from the deposited amount.
+
+## Running the tests
+
+```bash
+rspec
+```

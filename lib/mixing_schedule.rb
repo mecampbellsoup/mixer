@@ -1,4 +1,4 @@
-require 'utils'
+require 'lib/utils'
 
 class Array
   def except(value)
@@ -41,9 +41,9 @@ class MixingSchedule
     # first generate the schedule of mix transfers
     # then enqueue all of them
     schedule.each do |amount, internal_address|
-      SendJobcoinsJob.perform_in(20, { from: Deposit::HOUSE_ACCOUNT_ADDRESS, to: INTERNAL_CHILD_ADDRESSES[internal_address[0]], amount: amount })
-      SendJobcoinsJob.perform_in(40, { from: INTERNAL_CHILD_ADDRESSES[internal_address[0]], to: INTERNAL_CHILD_ADDRESSES[internal_address[1]], amount: amount })
-      SendJobcoinsJob.perform_in(60, { from: INTERNAL_CHILD_ADDRESSES[internal_address[1]], to: deposit.user.addresses_list.sample, amount: amount })
+      SendJobcoinsJob.perform_in(20, Deposit::HOUSE_ACCOUNT_ADDRESS, INTERNAL_CHILD_ADDRESSES[internal_address[0]], amount)
+      SendJobcoinsJob.perform_in(40, INTERNAL_CHILD_ADDRESSES[internal_address[0]], INTERNAL_CHILD_ADDRESSES[internal_address[1]], amount)
+      SendJobcoinsJob.perform_in(60, INTERNAL_CHILD_ADDRESSES[internal_address[1]], deposit.user.addresses_list.sample, amount)
     end
   end
 
