@@ -1,2 +1,2 @@
-require "./lib/mixer"
+require "./mixer"
 run Mixer

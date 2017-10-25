@@ -6,28 +6,6 @@ task :test do
 end
 
 namespace :jobcoin do
-  require 'lib/mixer'
-
-  desc "Imports user data from the Jobcoin blockchain for existing users, "\
-    "i.e. users which have already made deposits to the mixer"
-  task :import_users do
-    client = Jobcoin::Address.new(Mixer::JOBCOIN_DEPOSIT_ADDRESS)
-    all_deposits = client.transactions.select { |t| t['toAddress'] == Mixer::JOBCOIN_DEPOSIT_ADDRESS }
-    all_deposits.each do |t|
-      from_address = t['fromAddress']
-      next unless from_address
-
-      user = User.find_by_address(from_address)
-      if user
-        puts "User #{user.inspect} already persisted."
-      else
-        user = User.from_transaction_hash(t)
-        user.save!
-        puts "User #{user.inspect} saved to DB."
-      end
-    end
-  end
-
   desc "Polls the mixer's Jobcoin deposit address for new deposits since the previous check"
   task :check_for_new_deposits do
     # need some concept of 'last seen deposit'

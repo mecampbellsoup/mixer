@@ -1,16 +1,9 @@
 require File.expand_path '../spec_helper.rb', __FILE__
 
 RSpec.describe ::Mixer do
-  describe "GET /status" do
-    it 'responds 200 OK' do
-      get '/status'
-      expect(last_response.status).to eq 200
-      expect(last_response.body).to eq({ foo: 'bar' }.to_json)
-    end
-  end
-
   describe "POST /registrations" do
-    subject { post '/registrations', addresses.to_json }
+    let(:data) { { name: "Matt", addresses: addresses } }
+    subject { post '/registrations', data.to_json }
 
     context "user provides at least one re-deposit address" do
       let(:addresses) { [ 'testAddress1' ] }
@@ -54,7 +47,7 @@ RSpec.describe ::Mixer do
         end
 
         it "responds with 201 and the 'deposit to mixer' address" do
-          post '/registrations', addresses.to_json, {}
+          post '/registrations', data.to_json
 
           expect(last_response.status).to eq 201
           expect(last_response.body).to eq({ sendJobcoinsTo: 'Mixer' }.to_json)

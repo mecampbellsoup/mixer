@@ -1,23 +1,29 @@
 require 'data_mapper'
 require 'dm-types'
+require 'dm-timestamps'
 require 'sinatra/base'
-require 'sinatra/reloader'
 require 'sinatra/json'
 require 'pry'
 
-$:.unshift File.dirname(__FILE__)
-require 'jobcoin'
+# require models
+$:.unshift File.join(File.dirname(__FILE__), 'models')
 require 'user'
 require 'deposit'
+require 'repayment'
+
+# require lib files
+$:.unshift File.join(File.dirname(__FILE__), 'jobs')
+require 'poll_mixer_deposit_address_job'
+require 'send_jobcoins_job'
+
+# require lib files
+$:.unshift File.join(File.dirname(__FILE__), 'lib')
+require 'jobcoin'
 
 rack_env = ENV.fetch('RACK_ENV', 'development')
 DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/db/#{rack_env.strip}.db")
 
 class Mixer < Sinatra::Base
-  configure :development do
-    register Sinatra::Reloader
-  end
-
   # Jobcoin's addresses are just strings; e.g. Alice's address can be "Alice",
   # and Bob's address can be "Bob". Therefore we hardcode "Mixer" here.
   JOBCOIN_DEPOSIT_ADDRESS = 'Mixer'.freeze
@@ -25,19 +31,10 @@ class Mixer < Sinatra::Base
   #################
   # API Endpoints #
   #################
-  get '/status' do
-    # TODO: maybe this endpoint can poll the mixer's
-    # public deposit address...? For now just using to test
-    # that RSpec is wired up correctly to these endpoints.
-    json foo: 'bar'
-  end
-
   post '/registrations' do
     content_type :json
 
-    addresses = Array(json_params)
-    user = User.new(addresses: addresses)
-
+    user = User.new(json_params)
     if user.save
       status 201
       json sendJobcoinsTo: JOBCOIN_DEPOSIT_ADDRESS

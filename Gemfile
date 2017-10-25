@@ -13,6 +13,14 @@ gem 'sqlite3'
 gem 'rest-client'
 gem 'rake'
 
+source 'https://4b760862:22124b50@gems.contribsys.com/' do
+  gem 'sidekiq-pro', '< 4'
+end
+
+group :development, :test do
+  gem 'awesome_print'
+end
+
 group :development do
   gem 'pry'
 end

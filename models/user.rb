@@ -7,14 +7,14 @@ class User
   ObjectNotFound = Class.new(StandardError)
 
   property :id, Serial
-  property :created_at, DateTime, default: -> (_, _) { Time.now.utc }
+  property :name, String
+  property :created_at, DateTime
   property :addresses, Text
   has n, :deposits
 
+  validates_uniqueness_of :name
   validates_with_method :addresses, :is_array?
-  # NOTE: turn this on for production; makes
-  # development difficult...
-  #validates_with_method :addresses, :not_used?
+  validates_with_method :addresses, :not_used?
 
   def humanized_errors
     errors.flat_map { |e| e }.join

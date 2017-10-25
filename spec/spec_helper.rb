@@ -4,7 +4,7 @@ require 'database_cleaner'
 
 ENV['RACK_ENV'] = 'test'
 
-require File.expand_path '../../lib/mixer.rb', __FILE__
+require File.expand_path '../../mixer.rb', __FILE__
 
 module RSpecMixin
   include Rack::Test::Methods
@@ -16,7 +16,7 @@ RSpec.configure do |c|
 
   DataMapper::setup(:default, "sqlite3://#{Dir.pwd}/db/#{ENV['RACK_ENV']}.db")
   DataMapper.finalize
-  DataMapper.auto_upgrade!
+  DataMapper.auto_migrate!
 
   c.before(:suite) do
     DatabaseCleaner.strategy = :transaction

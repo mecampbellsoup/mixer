@@ -1,13 +1,17 @@
 GEM
   remote: https://rubygems.org/
+  remote: https://4b760862:22124b50@gems.contribsys.com/
   specs:
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
+    awesome_print (1.8.0)
     backports (3.10.3)
     bcrypt (3.1.11)
     bcrypt-ruby (3.1.5)
       bcrypt (>= 3.1.3)
     coderay (1.1.2)
+    concurrent-ruby (1.0.5)
+    connection_pool (2.2.1)
     data_mapper (1.2.0)
       dm-aggregates (~> 1.2.0)
       dm-constraints (~> 1.2.0)
@@ -82,6 +86,7 @@ GEM
     rack-test (0.7.0)
       rack (>= 1.0, < 3)
     rake (12.1.0)
+    redis (4.0.1)
     rest-client (2.0.2)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
@@ -99,6 +104,13 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.7.0)
     rspec-support (3.7.0)
+    sidekiq (5.0.5)
+      concurrent-ruby (~> 1.0)
+      connection_pool (~> 2.2, >= 2.2.0)
+      rack-protection (>= 1.5.0)
+      redis (>= 3.3.4, < 5)
+    sidekiq-pro (3.5.3)
+      sidekiq (>= 4.1.5)
     sinatra (2.0.0)
       mustermann (~> 1.0)
       rack (~> 2.0)
@@ -123,6 +135,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  awesome_print
   data_mapper
   database_cleaner
   dm-sqlite-adapter
@@ -132,6 +145,7 @@ DEPENDENCIES
   rake
   rest-client
   rspec
+  sidekiq-pro (< 4)!
   sinatra
   sinatra-contrib
   sqlite3
