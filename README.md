@@ -91,6 +91,8 @@ This challenge took me 2 or 3 working days to complete.
 
 I cut corners primarily on practicing test driven development - I felt like I needed to move quickly and just didn't have time to write as many tests as I normally would like to.
 
+One spot that I particularly liked is the [strategy that I use to compare a Jobcoin deposit to the mixer's public address with rows in the `deposits` table](https://github.com/mecampbellsoup/mixer/blob/50dc3a50d7f5f3aa877b0cff922d5f2eb9987eff/jobs/poll_mixer_deposit_address_job.rb#L16). Specifically it uses a hashing function to make it fast 'n easy to compare the two transactions and to subsequently decide whether or not the Jobcoin deposit at hand should be ingested or not.
+
 ### Mixer security concerns
 
 In a future version of this mixer, I would change one aspect in particular: all internal obfuscation transactions should have the same (or at least a fixed set of possibilities) amount, similar to what [CoinJoin](https://en.bitcoin.it/wiki/CoinJoin#Isn.27t_the_anonymity_set_size_limited_by_how_many_parties_you_can_get_in_a_single_transaction.3F) does.
