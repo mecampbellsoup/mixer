@@ -13,8 +13,7 @@ class User
   has n, :deposits
 
   validates_uniqueness_of :name
-  validates_with_method :addresses, :is_array?
-  validates_with_method :addresses, :not_used?
+  validates_presence_of :name, :addresses
 
   def humanized_errors
     errors.flat_map { |e| e }.join
@@ -55,28 +54,5 @@ class User
 
   def addresses_list
     JSON.parse(self.addresses)
-  end
-
-  private
-
-  def is_array?
-    if addresses_list.is_a?(Array)
-      true
-    else
-      [false, "Addresses must be a comma separated list"]
-    end
-  end
-
-  def not_used?
-    used = addresses_list.any? do |a|
-      jobcoin_address = Jobcoin::Address.new(a)
-      jobcoin_address.transactions.size > 0
-    end
-
-    if used
-      [false, "One or more of the provided addresses has already been used"]
-    else
-      true
-    end
   end
 end

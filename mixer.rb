@@ -5,28 +5,27 @@ require 'sinatra/base'
 require 'sinatra/json'
 require 'pry'
 
-# require models
-$:.unshift File.join(File.dirname(__FILE__), 'models')
-require 'user'
-require 'deposit'
-require 'repayment'
-
-# require lib files
-$:.unshift File.join(File.dirname(__FILE__), 'jobs')
-require 'poll_mixer_deposit_address_job'
-require 'send_jobcoins_job'
-
-# require lib files
-$:.unshift File.join(File.dirname(__FILE__), 'lib')
-require 'jobcoin'
-
 rack_env = ENV.fetch('RACK_ENV', 'development')
 DataMapper.setup(:default, ENV['DATABASE_URL'] || "sqlite3://#{Dir.pwd}/db/#{rack_env.strip}.db")
+
+# models
+$:.unshift File.dirname(__FILE__)
+Dir['models/*.rb'].each { |file| require file }
+
+# lib files
+Dir['lib/*.rb'].each { |file| require file }
+
+# jobs needed by mixer API
+require 'sidekiq'
+require 'sidekiq-cron'
+Dir['jobs/*.rb'].each { |file| require file }
 
 class Mixer < Sinatra::Base
   # Jobcoin's addresses are just strings; e.g. Alice's address can be "Alice",
   # and Bob's address can be "Bob". Therefore we hardcode "Mixer" here.
   JOBCOIN_DEPOSIT_ADDRESS = 'Mixer'.freeze
+
+  include Utils
 
   #################
   # API Endpoints #
@@ -46,11 +45,3 @@ end
 
 DataMapper.finalize
 DataMapper.auto_upgrade!
-
-def json_params
-  begin
-    JSON.parse(request.body.read)
-  rescue
-    halt 400, { message: 'Invalid JSON' }.to_json
-  end
-end

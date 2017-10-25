@@ -1,6 +1,5 @@
 GEM
   remote: https://rubygems.org/
-  remote: https://4b760862:22124b50@gems.contribsys.com/
   specs:
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
@@ -64,6 +63,8 @@ GEM
       data_objects (= 0.10.17)
     domain_name (0.5.20170404)
       unf (>= 0.0.5, < 1.0.0)
+    et-orbi (1.0.8)
+      tzinfo
     fastercsv (1.5.5)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
@@ -85,7 +86,7 @@ GEM
       rack
     rack-test (0.7.0)
       rack (>= 1.0, < 3)
-    rake (12.1.0)
+    rake (12.2.1)
     redis (4.0.1)
     rest-client (2.0.2)
       http-cookie (>= 1.0.2, < 2.0)
@@ -104,13 +105,16 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.7.0)
     rspec-support (3.7.0)
+    rufus-scheduler (3.4.2)
+      et-orbi (~> 1.0)
     sidekiq (5.0.5)
       concurrent-ruby (~> 1.0)
       connection_pool (~> 2.2, >= 2.2.0)
       rack-protection (>= 1.5.0)
       redis (>= 3.3.4, < 5)
-    sidekiq-pro (3.5.3)
-      sidekiq (>= 4.1.5)
+    sidekiq-cron (0.6.3)
+      rufus-scheduler (>= 3.3.0)
+      sidekiq (>= 4.2.1)
     sinatra (2.0.0)
       mustermann (~> 1.0)
       rack (~> 2.0)
@@ -125,7 +129,10 @@ GEM
       tilt (>= 1.3, < 3)
     sqlite3 (1.3.13)
     stringex (1.5.1)
+    thread_safe (0.3.6)
     tilt (2.0.8)
+    tzinfo (1.2.3)
+      thread_safe (~> 0.1)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.4)
@@ -145,7 +152,8 @@ DEPENDENCIES
   rake
   rest-client
   rspec
-  sidekiq-pro (< 4)!
+  sidekiq
+  sidekiq-cron
   sinatra
   sinatra-contrib
   sqlite3
